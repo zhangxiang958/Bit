@@ -53,13 +53,8 @@ const imgminConfig = {
 }
 
 // 上传七牛 cdn
-// var qn = require('gulp-qn');
-// var qiniu = {
-//     accessKey: '6sBCo463jJOCnBIYX__uy9avZ7C2hj_MHb-ffKAr',
-//     secretKey: '3vPk7fB0HcwL5V9E2AErHuR19HM389eYqdvQcncL',
-//     bucket: 'xdemo',
-//     domain: 'http://7xik9a.com1.z0.glb.clouddn.com'
-// };
+var qn          = require('gulp-qn');
+var qiniuConfig = require('./qiniu.config.js');
 
 // MD5戳
 var rev           = require('gulp-rev');
@@ -80,6 +75,7 @@ gulp.task('server', function(){
 gulp.task('devWatch', function(){
   gulp.watch('src/static/sass/*.scss', ['devCSS']);
   gulp.watch('src/*.html', ['devHTML']);
+  gulp.watch('src/**/*.js', ['devScript']);
 });
 
 //编译 html
@@ -94,6 +90,12 @@ gulp.task('devCSS', function(){
       .pipe(sass().on('error', sass.logError))
       .pipe(autoprefixer(autoprefixerConfig))
       .pipe(gulp.dest(devStaticPath + '/css'))
+      .pipe(connect.reload());
+});
+
+//编译 JS
+gulp.task('devScript', function(){
+  gulp.src('src/static/js/*.js')
       .pipe(connect.reload());
 });
 
@@ -125,10 +127,9 @@ function mapFiles(list, extname) {
 gulp.task('dev', ['server', 'devWatch', 'devHTML', 'devCSS']);
 gulp.task('devWEBPage', ['server', 'devWatch', 'devHTML', 'devCSS']);
 
-//=============================================================
+//===================== dev task end =========================
 
-
-//===============================================================
+//====================== Deploy ==============================
 gulp.task('publish-js', function () {
   return gulp.src(mapFiles(appList, 'js'))
         .pipe(named())
@@ -146,10 +147,6 @@ gulp.task('puclishCSS', function(){
       .pipe(minifyCSS())
       .pipe(rev())
       .pipe(gulp.dest(devStaticPath + '/css'))
-      // .pipe(qn({
-      //   qiniu: qiniu,
-      //   prefix: 'gmap'
-      // }))
       .pipe(rev.manifest());
 });
 
@@ -168,4 +165,9 @@ gulp.task('publish', function (callback) {
     ['publish-css', 'publish-js'],
     'publish-html',
     callback);
+});
+
+gulp.task('publish2qiniu', function(){
+      gulp.src(outputPath + '/**/*.*')
+          .pipe(qn(qiniuConfig));
 });

@@ -1,11 +1,9 @@
 # WaterFlow 
 
-一个基于 gulp 和 webpack 的前端工作流开发工具, 适合小团队的前端种子工作流.
+一个基于 gulp 和 webpack 的适合小团队前端工作流开发工具
 ## 解决你的前端工作流
 
 webp????
-开发与构建可以分开(构建用 gulp, 开发用 webpack)
-
 * 静态文件打包使用webpack
 * JS压缩使用uglify
 
@@ -15,7 +13,7 @@ webp????
 * 使用 autoprefixer, 自动添加浏览器兼容前缀, 解决你的兼容烦恼
 * CSS 合并, 减少 CSS 文件数量, 减少 HTTP 请求数量, 优化页面性能
 * CSS 压缩, 减少 CSS 文件大小, 减少 HTTP 请求大小, 加快首屏时间
-* CSS 雪碧图合并
+* CSS 雪碧图合并, 优化页面性能
 
 ### Javascript
 * 使用 Javascript 模块化
@@ -23,7 +21,8 @@ webp????
 * 压缩 Javascript 文件大小,  减少 HTTP 请求大小, 加快首屏时间
 * 合并 Javascript 文件, 减少 HTTP 请求数, 优化页面首屏时间
 
-js  webpack(vue, React)
+js  
+webpack(vue, React)
 Babel es6
 
 ### 图片
@@ -33,6 +32,7 @@ Babel es6
 ```
 ~$ gulp tinyImg
 ```
+输出路径
 
 ## 项目目录结构
 ```
@@ -48,7 +48,7 @@ project/
 
 ## Usage
 ### WebPage
-
+zepto/jQuery
 
 ### Vue
 使用 .vue 后缀文件的组件化开发, 使用 webpack 进行打包构建开发
