@@ -29,7 +29,7 @@ var sass = require('gulp-sass');
 var autoprefixer = require('gulp-autoprefixer');
 
 const autoprefixerConfig = {
-  browers: ['last 2 versions', 'Android >= 4.0', 'IOS'],
+  browers: ['>1%'],
   cascade: true,   //对齐属性(美化)
   remove: true
 };
@@ -149,13 +149,14 @@ gulp.task('publish-css', function () {
 
 
 gulp.task('puclishCSS', function(){
-  gulp.src('./src/static/less/*.less')
-      .pipe(less())
+  gulp.src('./src/static/sass/*.scss')
+      .pipe(sass().on('error', sass.logError))
       .pipe(autoprefixer(autoprefixerConfig))
       .pipe(concat('main.css'))
       .pipe(minifyCSS())
-      // .pipe(rev())
-      .pipe(gulp.dest(devStaticPath + '/css'));
+      .pipe(rev())
+      .pipe(gulp.dest(devStaticPath + '/css'))
+      .pipe(rev.manifest());
 });
 
 gulp.task('publish-html', function () {
