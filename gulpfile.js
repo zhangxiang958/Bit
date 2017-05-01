@@ -1,7 +1,6 @@
 /**
- * learning-gulp - gulpfile.js
- * Created by mengdesen on 15/4/14.
- * Last modified by nieweidong on 2015/04/15
+ * WaterFlow - gulpfile.js
+ * Created by zhangxiang on 17/5/1.
  */
 
 
