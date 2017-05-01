@@ -1,15 +1,13 @@
 # WaterFlow 
 
-## 解决前端工作流
+一个基于 gulp 和 webpack 的前端工作流开发工具, 适合小团队的前端种子工作流.
+## 解决你的前端工作流
 
+webp????
 开发与构建可以分开(构建用 gulp, 开发用 webpack)
-这个套路解决以下问题
-* MD5使用的rev
+
 * 静态文件打包使用webpack
 * JS压缩使用uglify
-* CSS压缩使用 gulp-minify-css
-* *(可选)*CDN使用七牛，所以有个可选的负责上传的gulp插件
-* concat是Gulp标配，不解释
 
 ## Solution
 ### CSS
@@ -17,6 +15,7 @@
 * 使用 autoprefixer, 自动添加浏览器兼容前缀, 解决你的兼容烦恼
 * CSS 合并, 减少 CSS 文件数量, 减少 HTTP 请求数量, 优化页面性能
 * CSS 压缩, 减少 CSS 文件大小, 减少 HTTP 请求大小, 加快首屏时间
+* CSS 雪碧图合并
 
 ### Javascript
 * 使用 Javascript 模块化
@@ -28,6 +27,23 @@ js  webpack(vue, React)
 Babel es6
 
 ### 图片
+当我们在本地开发的时候, 切图的时候可以不关注图片的大小, 可以只关注效果的呈现, 但是当我们部署静态资源的时候
+就需要关注页面性能了, 所以这时候会将图片进行压缩处理, 以便达到图片不失真但是文件大小减少的期望.
+使用命令进行压缩: 
+```
+~$ gulp tinyImg
+```
+
+## 项目目录结构
+```
+project/
+|---gulpfile.js
+|
+|---src
+|    |---
+|    |
+|
+```
 
 
 ## Usage
@@ -58,8 +74,12 @@ $baseFontSize: 75px;  //设计稿
 
 ## Deploy
 ### 静态文件部署
+
 对于 HTML 不进行缓存, 使用 304 条件 GET 请求进行使用
-对于 CSS, Javascript, 等使用 MD5 + 时间戳的方法使用高效缓存部署
+
+对于 CSS, Javascript, 等使用 MD5 + 时间戳的方法实现去缓存文件
+
+静态文件可以部署到七牛 CDN 上, 我们只需要做一个 CNAME DNS 解析就可以达到文件服务器的效果
 
 ## 附录
 ### 为什么使用 sass 而不是 less

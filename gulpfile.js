@@ -21,8 +21,15 @@ var concat            = require('gulp-concat');
 var minifyCSS         = require('gulp-minify-css');
 // var uglify        = require('gulp-uglify');
 var connect           = require('gulp-connect');
-// var mockServer    = require('gulp-mock-server');
 // var webpack       = require('gulp-webpack');
+
+//源文件路径
+const sourcePath    = 'src';
+const devStaticPath = 'src/static';
+const outputPath    = './build';
+
+//webpack 配置
+// var webpackConfig = require('./webpack.config.js');
 
 //CSS 编译
 var sass = require('gulp-sass');
@@ -34,22 +41,31 @@ const autoprefixerConfig = {
   remove: true
 };
 
+
+//图片压缩
+var imgmin    = require('gulp-imagemin');
+var pngquant  = require('imagemin-pngquant');  //深度压缩
+
+const imgminConfig = {
+  progressive: true, // 无损压缩JPG图片
+  svgoPlugins: [{removeViewBox: false}], // 不移除svg的viewbox属性
+  use: [pngquant()] // 使用pngquant插件进行深度压缩
+}
+
 // 上传七牛 cdn
 // var qn = require('gulp-qn');
+// var qiniu = {
+//     accessKey: '6sBCo463jJOCnBIYX__uy9avZ7C2hj_MHb-ffKAr',
+//     secretKey: '3vPk7fB0HcwL5V9E2AErHuR19HM389eYqdvQcncL',
+//     bucket: 'xdemo',
+//     domain: 'http://7xik9a.com1.z0.glb.clouddn.com'
+// };
 
 // MD5戳
-var rev = require('gulp-rev');
-var revCollector = require('gulp-rev-collector');
-// var runSequence = require('run-sequence');
+var rev           = require('gulp-rev');
+var revCollector  = require('gulp-rev-collector');
+var runSequence   = require('run-sequence');
 
-
-//源文件路径
-const sourcePath    = 'src';
-const devStaticPath = 'src/static';
-const outputPath    = './build';
-
-//webpack 配置
-// var webpackConfig = require('./webpack.config.js');
 
 //创建 本地服务器
 gulp.task('server', function(){
@@ -81,6 +97,12 @@ gulp.task('devCSS', function(){
       .pipe(connect.reload());
 });
 
+//压缩图片
+gulp.task('tinyImg', function(){
+   gulp.src(devStaticPath + '/img/*.{png,jpg,gif,ico}')
+       .pipe(imgmin(imgminConfig))
+       .pipe(gulp.dest(outputPath + '/img'));
+});
 
 //打包 SPA(app.js, router.js)
 var appList = ['app', 'router'];
@@ -99,29 +121,12 @@ function mapFiles(list, extname) {
   });
 };
 
-//使用 mock 模拟 API
-gulp.task('mock', function(){
-
-  gulp.src(sourcePath)
-      .pipe(mockServer({
-        mockDir: sourcePath + '/mock',
-        livereload: false,
-        directoryListing: false,
-        port: 8090
-      }));
-});
-
 // gulp.task('default', ['server', 'mock']);
 gulp.task('dev', ['server', 'devWatch', 'devHTML', 'devCSS']);
 gulp.task('devWEBPage', ['server', 'devWatch', 'devHTML', 'devCSS']);
 
 //=============================================================
-var qiniu = {
-    accessKey: '6sBCo463jJOCnBIYX__uy9avZ7C2hj_MHb-ffKAr',
-    secretKey: '3vPk7fB0HcwL5V9E2AErHuR19HM389eYqdvQcncL',
-    bucket: 'xdemo',
-    domain: 'http://7xik9a.com1.z0.glb.clouddn.com'
-};
+
 
 //===============================================================
 gulp.task('publish-js', function () {
@@ -133,21 +138,6 @@ gulp.task('publish-js', function () {
         .pipe(connect.reload());
 });
 
-gulp.task('publish-css', function () {
-  return gulp.src(mapFiles(cssList, 'css'))
-    .pipe(concat('app.css'))
-    .pipe(shrink())
-    .pipe(rev())
-    .pipe(gulp.dest(outputPath))
-    // .pipe(qn({
-    //   qiniu: qiniu,
-    //   prefix: 'gmap'
-    // }))
-    .pipe(rev.manifest())
-    .pipe(gulp.dest('./build/rev/css'));
-});
-
-
 gulp.task('puclishCSS', function(){
   gulp.src('./src/static/sass/*.scss')
       .pipe(sass().on('error', sass.logError))
@@ -156,11 +146,15 @@ gulp.task('puclishCSS', function(){
       .pipe(minifyCSS())
       .pipe(rev())
       .pipe(gulp.dest(devStaticPath + '/css'))
+      // .pipe(qn({
+      //   qiniu: qiniu,
+      //   prefix: 'gmap'
+      // }))
       .pipe(rev.manifest());
 });
 
 gulp.task('publish-html', function () {
-  return gulp.src(['./build/rev/**/*.json', sourcePath + '/index.html'])
+  return gulp.src(['./build/rev/**/*.json', sourcePath + '/*.html'])
     .pipe(revCollector({
       dirReplacements: {
         'build/': ''
