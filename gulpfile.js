@@ -21,7 +21,8 @@ var concat            = require('gulp-concat');
 var minifyCSS         = require('gulp-minify-css');
 // var uglify        = require('gulp-uglify');
 var connect           = require('gulp-connect');
-// var webpack       = require('gulp-webpack');
+var gutil             = require('gulp-util'); 
+var webpack           = require('webpack');
 
 //源文件路径
 const sourcePath    = 'src';
@@ -29,16 +30,17 @@ const devStaticPath = 'src/static';
 const outputPath    = './build';
 
 //webpack 配置
-// var webpackConfig = require('./webpack.config.js');
+var webpackConfig = require('./webpack.mutipart.config.js');
+var devCompiler   = webpack(Object.create(webpackConfig));
 
 //CSS 编译
 var sass = require('gulp-sass');
 var autoprefixer = require('gulp-autoprefixer');
 
 const autoprefixerConfig = {
-  browers: ['>1%'],
-  cascade: true,   //对齐属性(美化)
-  remove: true
+    browers: ['>1%'],
+    cascade: true,   //对齐属性(美化)
+    remove: true
 };
 
 
@@ -61,7 +63,7 @@ var rev           = require('gulp-rev');
 var revCollector  = require('gulp-rev-collector');
 var runSequence   = require('run-sequence');
 
-
+//===================  dev =============================
 //创建 本地服务器
 gulp.task('server', function(){
   connect.server({
@@ -94,10 +96,10 @@ gulp.task('devCSS', function(){
 });
 
 //编译 JS
-gulp.task('devScript', function(){
-  gulp.src('src/static/js/*.js')
-      .pipe(connect.reload());
-});
+// gulp.task('devScript', function(){
+//   gulp.src('src/static/js/*.js')
+//       .pipe(connect.reload());
+// });
 
 //压缩图片
 gulp.task('tinyImg', function(){
@@ -107,25 +109,32 @@ gulp.task('tinyImg', function(){
 });
 
 //打包 SPA(app.js, router.js)
-var appList = ['app', 'router'];
+// var appList = ['app', 'router'];
 
 gulp.task('bundle', function(){
-  return gulp.src(mapFiles(appList, 'js'))
-        .pipe(named())
-        .pipe(webpack(webpackConfig))
-        .pipe(gulp.dest('src/lib/'))
-        .pipe(connect.reload());
+  // return gulp.src(mapFiles(appList, 'js'))
+  //       .pipe(named())
+  //       .pipe(webpack(webpackConfig))
+  //       .pipe(gulp.dest('src/lib/'))
+  //       .pipe(connect.reload());
+  devCompiler.run(function(err, stats){
+    if(err) throw new gutil.PluginError('webpack:bulid-js', err);
+    gutil.log('[webpack:bulid-js]', stats.toString({
+      colors: true
+    }));
+  });
+
 });
 
-function mapFiles(list, extname) {
-  return list.map(function (app){
-    return 'src/' + app + '.' + extname;
-  });
-};
+// function mapFiles(list, extname) {
+//   return list.map(function (app){
+//     return 'src/' + app + '.' + extname;
+//   });
+// };
 
 // gulp.task('default', ['server', 'mock']);
 gulp.task('dev', ['server', 'devWatch', 'devHTML', 'devCSS']);
-gulp.task('devWEBPage', ['server', 'devWatch', 'devHTML', 'devCSS']);
+gulp.task('devWEBPage', ['server', 'devWatch', 'devHTML', 'devCSS', 'bundle']);
 
 //===================== dev task end =========================
 

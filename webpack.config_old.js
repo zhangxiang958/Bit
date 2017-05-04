@@ -10,7 +10,7 @@ var webpack = require('webpack');
 
 module.exports = {
           devtool: 'eval-source-map',  //配置生成 Source Maps, 选择合适的选项
-          watch: true,
+
           entry: {
                 "index": "./src/app.js"
           },
@@ -21,7 +21,13 @@ module.exports = {
             publicPath:  './lib/'
           },
 
-          
+          devServer: {
+            contentBase: './src',        //本地服务器加载页面所在目录
+            colors: true,               //终端为彩色
+            historyApiFallback: true,  //不跳转
+            inline: true,
+            hot: true
+          },
 
           //module 添加 loader
           /**
@@ -30,26 +36,34 @@ module.exports = {
           *  @include/exclude  手动添加必须处理的文件(夹)或屏蔽不需要处理的文件(夹)
           *  @query  为 laoders 提供额外设置选项
           */
-         module: {
+          module: {
             loaders: [
+              {
+                test: /\.vue$/,
+                loader: 'vue'
+              }, 
               {
                 test: /\.js$/,
                 exclude: /node_modules/,
-                loader: 'babel-loader',
+                loader: 'babel',
                 query: {
-                  presets: ['es2015', 'react']
+                  presets: ['es2015']
                 }
               },
               {
                 test: /\.css$/,
-                loader: 'style-loader!css-loader?modules!postcss-loader'
+                loader: 'style!css?module!postcss'
+              },
+              {
+                test: /\.(png|jpg)$/,
+                loader: 'url'
               }
             ]
           },
 
-          // postcss: [
-          //     require('autoprefixer')//调用autoprefixer插件
-          // ],
+          postcss: [
+            require('autoprefixer')  //调用 autoprefixer
+          ],
           // vue: {
           // 	loaders: {
           // 		css: ExtractTextPlugin.extract('css')
@@ -58,26 +72,13 @@ module.exports = {
           resolve: {
               alias: {vue: 'vue/dist/vue.js'}
           },
-          // babel: {
-          //     presets: ['es2015'],
-          //     plugins: ['transform-runtime']
-          // },
+          babel: {
+              presets: ['es2015'],
+              plugins: ['transform-runtime']
+          },
           plugins: [
-              new webpack.LoaderOptionsPlugin({
-                options: {
-                  postcss: [
-                    require('autoprefixer')
-                  ],
-                  devServer: {
-                    contentBase: './src',        //本地服务器加载页面所在目录
-                    colors: true,               //终端为彩色
-                    historyApiFallback: true,  //不跳转
-                    inline: true,
-                    hot: true
-                  },
-                }
-              })
-            	//new ExtractTextPlugin('style.css'),
-              //new webpack.optimize.CommonsChunkPlugin(/* chunkName= */"vendor", /* filename= */"vendor.bundle.js")
-          ]
+            	new ExtractTextPlugin('style.css'),
+              new Webpack.optimize.CommonsChunkPlugin(/* chunkName= */"vendor", /* filename= */"vendor.bundle.js")
+          ],
+          watch: true
         };

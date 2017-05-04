@@ -15,6 +15,10 @@ webp????
 * CSS 压缩, 减少 CSS 文件大小, 减少 HTTP 请求大小, 加快首屏时间
 * CSS 雪碧图合并, 优化页面性能
 
+对于多人协作, css 的命名全局污染一直是 CSS 的痛点, 所以可以使用 webpack 的 css-loader 来实现
+css module 来消除痛点. 而在 webpage 中, 考虑到小团队中参与开发人员不多, 项目规模较小的情况下, 建议
+使用 BEM 等命名规范这种弱约束来达到模块化 CSS.
+
 ### Javascript
 * 使用 Javascript 模块化
 * 使用 ESLint, 规范团队协作, 减少 Javascript 错误
