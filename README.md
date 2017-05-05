@@ -44,8 +44,30 @@ project/
 |---gulpfile.js
 |
 |---src
-|    |---
+|    |---API   存放关于后端请求相关操作的 js 文件
 |    |
+|    |---mock  mock 服务器与 mock 文件
+|    |
+|    |---components  存放公用组件
+|    |
+|    |---views   存放页面
+|    |
+|    |---static  存放静态资源（img，css，js）
+|    |     |---img
+|	 |     |	|---page
+|	 |	   |	|---slice
+|    |     |
+|	 |	   |---css  //打包后的 css 文件
+|    |     |
+|    |	   |---sass //编写的 scss 文件
+|    |     |
+|    |     |---js
+|    |          |---lib      第三方 js 库
+|    |          |---scripts  编写的 js 脚本
+|    |          |---dest     打包完成的 js 文件
+|    |
+|    |---index.html  默认页面
+|    |---
 |
 ```
 

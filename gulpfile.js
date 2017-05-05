@@ -31,9 +31,9 @@ const outputPath    = './build';
 
 //webpack 配置
 var webpackConfig = require('./webpack.mutipart.config.js');
-var devCompiler   = webpack(Object.create(webpackConfig));
+// var devCompiler   = webpack(Object.create(webpackConfig));
 
-//CSS 编译
+//CSS 编译配置
 var sass = require('gulp-sass');
 var autoprefixer = require('gulp-autoprefixer');
 
@@ -44,7 +44,7 @@ const autoprefixerConfig = {
 };
 
 
-//图片压缩
+//图片压缩配置
 var imgmin    = require('gulp-imagemin');
 var pngquant  = require('imagemin-pngquant');  //深度压缩
 
@@ -77,7 +77,7 @@ gulp.task('server', function(){
 gulp.task('devWatch', function(){
   gulp.watch('src/static/sass/*.scss', ['devCSS']);
   gulp.watch('src/*.html', ['devHTML']);
-  gulp.watch('src/**/*.js', ['devScript']);
+  gulp.watch('src/static/js/*.js', ['bundle']);
 });
 
 //编译 html
@@ -117,13 +117,14 @@ gulp.task('bundle', function(){
   //       .pipe(webpack(webpackConfig))
   //       .pipe(gulp.dest('src/lib/'))
   //       .pipe(connect.reload());
-  devCompiler.run(function(err, stats){
+  webpack(webpackConfig).run(function(err, stats){
     if(err) throw new gutil.PluginError('webpack:bulid-js', err);
+    connect.reload();
     gutil.log('[webpack:bulid-js]', stats.toString({
       colors: true
     }));
   });
-
+  connect.reload();
 });
 
 // function mapFiles(list, extname) {

@@ -37,10 +37,22 @@ module.exports = {
           entry: getEntry(),
           //入口文件配置
           output: {
-              path: path.join(__dirname, '/bulid'),
+              path: path.join(__dirname, '/src/static/dest'),
               publicPath: 'bulid/js',
               filename: "[name].js",
               chunkFilename: '[chunkhash].js'
+          },
+           module: {
+              loaders: [
+                  {
+                      test: /\.js$/,
+                      exclude: /node_modules/,
+                      loader: 'babel-loader', // 'babel-loader' is also a legal name to reference
+                      query: {
+                          presets: ['es2015']
+                      }
+                  }
+              ]
           },
           resolve: {
               alias: {
@@ -48,10 +60,6 @@ module.exports = {
                 // vue: 'vue/dist/vue.js'
               }
           },
-          // babel: {
-          //     presets: ['es2015'],
-          //     plugins: ['transform-runtime']
-          // },
           //插件项
           plugins: [
               new webpack.ProvidePlugin({
@@ -59,6 +67,5 @@ module.exports = {
                 $: 'jquery'
               }),
               new webpack.optimize.CommonsChunkPlugin('common')
-          ],
-          // watch: true
+          ]
         };
