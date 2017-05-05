@@ -37,7 +37,7 @@ module.exports = {
           entry: getEntry(),
           //入口文件配置
           output: {
-              path: path.join(__dirname, '/lib'),
+              path: path.join(__dirname, '/bulid'),
               publicPath: 'bulid/js',
               filename: "[name].js",
               chunkFilename: '[chunkhash].js'
@@ -54,11 +54,11 @@ module.exports = {
           // },
           //插件项
           plugins: [
-              new Webpack.ProvidePlugin({
+              new webpack.ProvidePlugin({
                 jQuery: 'jquery',
                 $: 'jquery'
               }),
-              new Webpack.optimize.CommonsChunkPlugin('common')
+              new webpack.optimize.CommonsChunkPlugin('common')
           ],
           // watch: true
         };
