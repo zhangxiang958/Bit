@@ -42,7 +42,7 @@ module.exports = {
               },
               {
                 test: /\.css$/,
-                loader: 'style-loader!css-loader?modules!postcss-loader'
+                loader: 'style-loader!css-loader?modules!postcss-loader'  //从右到左
               }
             ]
           },
@@ -65,9 +65,11 @@ module.exports = {
           plugins: [
               new webpack.LoaderOptionsPlugin({
                 options: {
+                  //
                   postcss: [
                     require('autoprefixer')
                   ],
+                  //开发服务器
                   devServer: {
                     contentBase: './src',        //本地服务器加载页面所在目录
                     colors: true,               //终端为彩色
@@ -76,7 +78,8 @@ module.exports = {
                     hot: true
                   },
                 }
-              })
+              }),
+              new webpack.HotModuleReplacementPlugin()   //热加载插件
             	//new ExtractTextPlugin('style.css'),
               //new webpack.optimize.CommonsChunkPlugin(/* chunkName= */"vendor", /* filename= */"vendor.bundle.js")
           ]

@@ -8,7 +8,7 @@
 var gulp              = require('gulp');
 var concat            = require('gulp-concat');
 var minifyCSS         = require('gulp-minify-css');
-// var uglify        = require('gulp-uglify');
+var uglify            = require('gulp-uglify');
 var connect           = require('gulp-connect');
 var gutil             = require('gulp-util'); 
 var webpack           = require('webpack');
@@ -113,32 +113,31 @@ gulp.task('devPage', ['server', 'devWatch', 'devHTML', 'devCSS', 'devScript']);
 //===================== dev task end =========================
 
 //====================== Deploy ==============================
-gulp.task('publish-js', function () {
-  return gulp.src(devStaticPath + '/dest')
-        .pipe(named())
-        .pipe(webpack(webpackConfig))
-        .pipe(uglify())
-        .pipe(rev())
-        .pipe(gulp.dest(outputPath))
-        .pipe(rev.manifest());
+gulp.task('publish-js', ['bundle'], function () {
+  return gulp.src(devStaticPath + '/dest/*.js')
+             .pipe(uglify())
+             .pipe(rev())
+             .pipe(gulp.dest(outputPath + '/js'))
+             .pipe(rev.manifest());
 });
 
-gulp.task('puclishCSS', function(){
-  gulp.src('./src/static/sass/*.scss')
+gulp.task('publish-css', function(){
+  return gulp.src('./src/static/sass/*.scss')
       .pipe(sass().on('error', sass.logError))
       .pipe(autoprefixer(autoprefixerConfig))
       .pipe(concat('main.css'))
       .pipe(minifyCSS())
       .pipe(rev())
-      .pipe(gulp.dest(devStaticPath + '/css'))
+      .pipe(gulp.dest(outputPath + '/css'))
       .pipe(rev.manifest());
 });
 
 gulp.task('publish-html', function () {
-  return gulp.src(['./build/rev/**/*.json', sourcePath + '/*.html'])
+  return gulp.src(['build/**/*.json', sourcePath + '/*.html'])
     .pipe(revCollector({
       dirReplacements: {
-        'build/': ''
+        './static/css': './css',
+        './static/dest/': './js'
       }
     }))
     .pipe(gulp.dest(outputPath));
