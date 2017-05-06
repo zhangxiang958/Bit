@@ -3,17 +3,6 @@
  * Created by zhangxiang on 17/5/1.
  */
 
-
-/**
-1.如果是 react 项目就打包 React, 如果是 Vue 项目就打包 Vue, 项目结构类似 done
-2.将静态资源上传到七牛 CDN done
-3.将 CSS, JS 文件压缩  js done
-4.合并雪碧图
-5.文件使用 md5
-6.mock done
-**/
-
-
 'use strict';
 
 var gulp              = require('gulp');
@@ -31,7 +20,7 @@ const outputPath    = './build';
 
 //webpack 配置
 var webpackConfig = require('./webpack.mutipart.config.js');
-// var devCompiler   = webpack(Object.create(webpackConfig));
+var devCompiler   = webpack(webpackConfig);
 
 //CSS 编译配置
 var sass = require('gulp-sass');
@@ -75,9 +64,9 @@ gulp.task('server', function(){
 
 //监听文件
 gulp.task('devWatch', function(){
-  gulp.watch('src/static/sass/*.scss', ['devCSS']);
   gulp.watch('src/*.html', ['devHTML']);
-  gulp.watch('src/static/js/*.js', ['bundle']);
+  gulp.watch('src/static/sass/*.scss', ['devCSS']);
+  gulp.watch('src/static/js/*.js', ['devScript']);
 });
 
 //编译 html
@@ -96,10 +85,21 @@ gulp.task('devCSS', function(){
 });
 
 //编译 JS
-// gulp.task('devScript', function(){
-//   gulp.src('src/static/js/*.js')
-//       .pipe(connect.reload());
-// });
+gulp.task('devScript',['bundle'],function(){
+
+  gulp.src('src/static/**/*.js')
+      .pipe(connect.reload());
+});
+
+gulp.task('bundle', function(){
+
+  devCompiler.run(function(err, stats){
+    if(err) throw new gutil.PluginError('webpack:bulid-js', err);
+    gutil.log('[webpack:bulid-js]', stats.toString({
+      colors: true
+    }));
+  });
+});
 
 //压缩图片
 gulp.task('tinyImg', function(){
@@ -108,45 +108,19 @@ gulp.task('tinyImg', function(){
        .pipe(gulp.dest(outputPath + '/img'));
 });
 
-//打包 SPA(app.js, router.js)
-// var appList = ['app', 'router'];
-
-gulp.task('bundle', function(){
-  // return gulp.src(mapFiles(appList, 'js'))
-  //       .pipe(named())
-  //       .pipe(webpack(webpackConfig))
-  //       .pipe(gulp.dest('src/lib/'))
-  //       .pipe(connect.reload());
-  webpack(webpackConfig).run(function(err, stats){
-    if(err) throw new gutil.PluginError('webpack:bulid-js', err);
-    connect.reload();
-    gutil.log('[webpack:bulid-js]', stats.toString({
-      colors: true
-    }));
-  });
-  connect.reload();
-});
-
-// function mapFiles(list, extname) {
-//   return list.map(function (app){
-//     return 'src/' + app + '.' + extname;
-//   });
-// };
-
-// gulp.task('default', ['server', 'mock']);
-gulp.task('dev', ['server', 'devWatch', 'devHTML', 'devCSS']);
-gulp.task('devWEBPage', ['server', 'devWatch', 'devHTML', 'devCSS', 'bundle']);
+gulp.task('devPage', ['server', 'devWatch', 'devHTML', 'devCSS', 'devScript']);
 
 //===================== dev task end =========================
 
 //====================== Deploy ==============================
 gulp.task('publish-js', function () {
-  return gulp.src(mapFiles(appList, 'js'))
+  return gulp.src(devStaticPath + '/dest')
         .pipe(named())
         .pipe(webpack(webpackConfig))
         .pipe(uglify())
+        .pipe(rev())
         .pipe(gulp.dest(outputPath))
-        .pipe(connect.reload());
+        .pipe(rev.manifest());
 });
 
 gulp.task('puclishCSS', function(){

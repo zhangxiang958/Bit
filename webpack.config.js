@@ -15,7 +15,7 @@ module.exports = {
                 "index": "./src/app.js"
           },
           output: {
-            path: __dirname + '/lib',
+            path: __dirname + '/static/js/dest',
             filename: "app.js",
             chunkFilename: "[name].js",
             publicPath:  './lib/'

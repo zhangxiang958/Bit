@@ -8,7 +8,6 @@
 var path                = require('path');
 var fs                  = require('fs');
 var webpack             = require('webpack');
-//var ExtractTextPlugin   = require('extract-text-webpack-plugin');  //将文件中的样式另外打包出来
 var CommonsChunkPlugin  = require("webpack/lib/optimize/CommonsChunkPlugin");
 
 var srcDir = path.resolve(process.cwd(), 'src/static');
@@ -35,6 +34,7 @@ function getEntry(){
 module.exports = {
           //页面入口文件配置
           entry: getEntry(),
+
           //入口文件配置
           output: {
               path: path.join(__dirname, '/src/static/dest'),
@@ -42,7 +42,9 @@ module.exports = {
               filename: "[name].js",
               chunkFilename: '[chunkhash].js'
           },
-           module: {
+
+          //加载器
+          module: {
               loaders: [
                   {
                       test: /\.js$/,
@@ -54,18 +56,19 @@ module.exports = {
                   }
               ]
           },
+
           resolve: {
               alias: {
 
-                // vue: 'vue/dist/vue.js'
               }
           },
+
           //插件项
           plugins: [
               new webpack.ProvidePlugin({
                 jQuery: 'jquery',
-                $: 'jquery'
+                Zepto:  'Zepto'
               }),
-              new webpack.optimize.CommonsChunkPlugin('common')
+              //new webpack.optimize.CommonsChunkPlugin('common')
           ]
         };
