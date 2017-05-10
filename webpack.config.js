@@ -15,8 +15,8 @@ var HtmlWebpackPlugin = require('html-webpack-plugin');
 // 获取所有入口文件
 var getEntry = function(globPath) {
     var entries = {
-        //vendor: ['jquery','./node_modules/react/dist/react.js','react-dom','./src/app'] // 类库
-        'app': './src/app.js'
+        //vendor: ['jquery','./node_modules/react/dist/react.js','react-dom'], // 类库
+        index: [path.join(__dirname, '/src/app.js')]
     };
     glob.sync(globPath).forEach(function(entry) {
         var pathname = entry.split('/').splice(-2).join('/').split('.')[0];
@@ -34,7 +34,7 @@ var chunks        = Object.keys(entries);
 module.exports = {
     entry: entries,
     output: {
-        path: path.join(__dirname, '/src/static/dest'),
+        path: '/src/static/dest',
         filename: isProduction ?'js/[name].[hash:8].js':'js/[name].js',
         publicPath: '/dist/',
         chunkFilename: 'chunk/[name].chunk.js'
@@ -42,7 +42,7 @@ module.exports = {
     module: {
         loaders: [{
             test: /\.jsx?$/,
-            loader: 'react-hot-loader!babel-loader',
+            loader: 'babel-loader',
             query: {
                 presets: ['es2015', 'react']
             },

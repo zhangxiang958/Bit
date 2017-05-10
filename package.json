@@ -6,7 +6,7 @@
   "scripts": {
     "start": "export NODE_ENV=dev&&webpack",
     "build": "export NODE_ENV=production&&webpack",
-    "dev": "export NODE_ENV=dev&&webpack-dev-server --hot --inline"
+    "dev": "export NODE_ENV=dev&&webpack-dev-server --devtool eval --hot --inline --color --content-base src"
   },
   "repository": {
     "type": "git",
